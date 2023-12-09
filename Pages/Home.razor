@@ -4,21 +4,42 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-@if (coinDataList != null) {
-    foreach (var coinData in coinDataList)
-    {
-    <div>
-        <img src="@coinData.Image" style="height: 20px; width: 20px; vertical-align: middle; margin-right: 5px;">
-        <p><strong>ID:</strong> @coinData.Id</p>
-        <p><strong>Symbol:</strong> @coinData.Symbol</p>
-        <p><strong>Name:</strong> @coinData.Name</p>
-        <p><strong>Current Price:</strong> €@coinData.CurrentPrice.ToString("N2")</p>
-        <p><strong>Market Cap:</strong> €@coinData.MarketCap.ToString("N0")</p>
-        <p><strong>Price Change 24h:</strong> €@coinData.PriceChange24H</p>
-        <p><strong>Price Change %:</strong> @coinData.PriceChangePercentage24H%</p>
-    </div>
-    }
+@if (coinDataList != null && coinDataList.Count > 0)
+{
+    <h1 class="text-white mt-5">Cryptocurrency Prices by Market Cap</h1>
+    <hr class="text-white">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="text-white">Rank</th>
+                <th class="text-white">Name</th>
+                <th class="text-white">Current Price</th>
+                <th class="text-white">Price Change 24 Hours</th>
+                <th class="text-white">Market Cap</th>
+                <th class="text-white">All Time High</th>
+                <th class="text-white">All Time Low</th>
+                <th class="text-white">Volume (24h)</th>
+            </tr>
+        </thead>
+        <tbody>
+                @foreach(var coinData in coinDataList)
+                {
+                <tr>
+                    <td class="text-white">@coinData.MarketCapRank</td>
+                    <td class="text-white">
+                    <img src="@coinData.Image" style="height: 20px; width: 20px; vertical-align: middle; margin-right: 5px;">
+                    @coinData.Name
+                    </td>
+                    <td class="text-white">€@coinData.CurrentPrice.ToString("N2")</td>
+                    <td class="text-white">€@coinData.PriceChange24H.ToString("N2") (@coinData.PriceChangePercentage24H%)</td>
+                    <td class="text-white">€@coinData.MarketCap.ToString("N2")</td>
+                    <td class="text-white">€@coinData.Ath.ToString("N2") (@coinData.AthDate)</td>
+                    <td class="text-white">€@coinData.Atl.ToString("N2") (@coinData.AtlDate)</td>
+                    <td class="text-white">€@coinData.TotalVolume.ToString("N2")</td>
+                </tr>
+                }
+        </tbody>
+    </table>
 }
 @code {
     private List<CoinData>? coinDataList;
@@ -68,5 +89,23 @@
 
         [JsonPropertyName("market_cap")]
         public long MarketCap { get; set; }
+
+        [JsonPropertyName("ath")]
+        public decimal Ath { get; set; }
+
+        [JsonPropertyName("ath_date")]
+        public DateTime AthDate { get; set; }
+
+        [JsonPropertyName("atl")]
+        public decimal Atl { get; set; }
+
+        [JsonPropertyName("atl_date")]
+        public DateTime AtlDate { get; set; }
+
+        [JsonPropertyName("market_cap_rank")]
+        public int MarketCapRank { get; set; }
+
+        [JsonPropertyName("total_volume")]
+        public long TotalVolume { get; set; }
     }
 }

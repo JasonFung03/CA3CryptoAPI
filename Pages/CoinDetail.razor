@@ -7,25 +7,60 @@
 {
     @foreach (var coin in coinData)
     {
-        <div class="card mb-5">
-            <div class="card-body bg-dark">
-                <h3>
+                  <div class="container">
+                    <h3>
                     <img src="@coin.Image" style="height: 50px; width: 50px; vertical-align: middle; margin-right: 5px;">
                     @coin.Name
-                </h3>
-                <h6 class="card-text">
-                    €@coin.CurrentPrice.ToString("N2")
-                </h6>
-                @if (@coin.PriceChange24H > 0)
-                {
-                    <p class="card-text"><small class="text-success">+€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
-                }
-                else
-                {
-                    <p class="card-text"><small class="text-danger">€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
-                }
-            </div>
-        </div>
+                    </h3>
+                    <strong><h2 class="card-text">
+                        €@coin.CurrentPrice.ToString("N2")
+                    </h2></strong>
+                    @if (@coin.PriceChange24H > 0)
+                    {
+                        <p><small class="text-success">+€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
+                    }
+                    else
+                    {
+                        <p class="card-text"><small class="text-danger">€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
+                    }
+                    <div class="row">
+                    <div class="col-md-3 mt-2">
+                        <p>Market Cap</p>
+                        <p class="text-muted">€@coin.MarketCap.ToString("N2")</p>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <p>All Time High</p>
+                        <p class="text-muted">€@coin.Ath.ToString("N2") (@coin.AthDate)</p>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <p>All Time Low</p>
+                        <p class="text-muted">€@coin.Atl.ToString("N2") (@coin.AtlDate)</p>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-3 mt-2">
+                        <p>Total Volume</p>
+                        <p class="text-muted">€@coin.TotalVolume</p>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <p>Circulating Supply</p>
+                        <p class="text-muted">@coin.Circulating_Supply</p>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <p>Max Supply</p>
+                        <p class="text-muted">@coin.MaxSupply</p>
+                    </div>
+                    </div>
+                    <div class="input-group mb-5">
+                    @* @oninput="Calculator" doesnt work as well. *@
+                    <input type="number" @bind="inputAmount"  class="form-control rounded bg-dark text-white" aria-label="Search" aria-describedby="search-addon" />
+                    <button @onclick="Calculator" class="btn btn-outline-info text-white">Calculate</button>
+                    </div>
+                    @if (calculatedAmount > 0) {
+                        <p class="mt-3">@calculatedAmount | @coin.Name</p>
+                    }
+                </div>
+                
     }
 }
 else if (noCoinFound)
@@ -38,6 +73,9 @@ else if (noCoinFound)
     public string? CoinId { get; set; }
     private List<CoinData>? coinData;
     private bool noCoinFound = false;
+    private decimal inputAmount = 100;
+    private decimal calculatedAmount;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,7 +101,11 @@ else if (noCoinFound)
             }
         }
     }
-
+    public void Calculator() {
+        foreach (var coindata in coinData) {
+            calculatedAmount = inputAmount / coindata.CurrentPrice;
+        }
+    }
     public class CoinData
     {
         [JsonPropertyName("id")]
@@ -84,5 +126,28 @@ else if (noCoinFound)
         [JsonPropertyName("price_change_percentage_24h")]
         public decimal PriceChangePercentage24H { get; set; }
 
+        [JsonPropertyName("market_cap")]
+        public decimal MarketCap { get; set; }
+
+        [JsonPropertyName("ath")]
+        public decimal Ath { get; set; }
+
+        [JsonPropertyName("ath_date")]
+        public DateTime AthDate { get; set; }
+
+        [JsonPropertyName("atl")]
+        public decimal Atl { get; set; }
+
+        [JsonPropertyName("atl_date")]
+        public DateTime AtlDate { get; set; }
+
+        [JsonPropertyName("total_volume")]
+        public decimal? TotalVolume { get; set; }
+
+        [JsonPropertyName("circulating_supply")]
+        public decimal? Circulating_Supply { get; set; }
+
+        [JsonPropertyName("max_supply")]
+        public decimal? MaxSupply { get; set; }
     }
 }

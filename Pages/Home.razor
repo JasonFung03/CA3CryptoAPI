@@ -23,7 +23,14 @@
                     <h6 class="card-text">
                         €@coin.CurrentPrice.ToString("N2")
                     </h6>
-                    <p class="card-text"><small class="text-white">€@coin.PriceChange24H (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
+                   @if (@coin.PriceChange24H > 0)
+                        {
+                        <p class="card-text"><small class="text-success">+€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
+                        }
+                        else
+                        {
+                        <p class="card-text"><small class="text-danger">€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
+                        }
                 </div>
             </div>
         }
@@ -59,7 +66,12 @@
                     @coinData.Name
                     </td>
                     <td class="text-white">€@coinData.CurrentPrice.ToString("N2")</td>
-                    <td class="text-white">€@coinData.PriceChange24H.ToString("N2") (@coinData.PriceChangePercentage24H%)</td>
+                    @if (@coinData.PriceChange24H > 0)
+                        {
+                            <td class="text-success">€@coinData.PriceChange24H.ToString("N2") (@coinData.PriceChangePercentage24H%)</td>
+                        } else {
+                            <td class="text-danger">€@coinData.PriceChange24H.ToString("N2") (@coinData.PriceChangePercentage24H%)</td>
+                        }
                     <td class="text-white">€@coinData.MarketCap.ToString("N2")</td>
                     <td class="text-white">€@coinData.Ath.ToString("N2") (@coinData.AthDate)</td>
                     <td class="text-white">€@coinData.Atl.ToString("N2") (@coinData.AtlDate)</td>

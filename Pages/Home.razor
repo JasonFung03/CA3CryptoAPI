@@ -3,40 +3,36 @@
 @using System.Text.Json.Serialization;
 
 <PageTitle>Crypto Tracker</PageTitle>
-<h1 class="text-white mt-5">Search for a coin</h1>
-<hr class="text-white">
+
 <div class="input-group mb-5">
-    <input @bind="searchQuery" class="form-control rounded bg-dark text-white" placeholder="Enter coin ID" aria-label="Search" aria-describedby="search-addon" />
-    <button @onclick="SearchCoinById" class="btn btn-outline-info text-white">Search</button>
+    <input @bind="searchQuery" class="form-control rounded bg-dark text-white" placeholder="Enter a coin..." aria-label="Search" aria-describedby="search-addon" />
+    <button @onclick="SearchCoins" class="btn btn-outline-info text-white">Search</button>
 </div>
 
-@if (coinData != null && coinData.Count > 0)
+@if (searchResults != null && searchResults.Count > 0)
 {
-    @foreach (var coin in coinData)
-        {
-            <div class="card mb-5">
-                <div class="card-body bg-dark">
-                    <h3>
-                        <img src="@coin.Image" style="height: 50px; width: 50px; vertical-align: middle; margin-right: 5px;">
-                        @coin.Name
-                    </h3>
-                    <h6 class="card-text">
-                        €@coin.CurrentPrice.ToString("N2")
-                    </h6>
-                   @if (@coin.PriceChange24H > 0)
-                        {
-                        <p class="card-text"><small class="text-success">+€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
-                        }
-                        else
-                        {
-                        <p class="card-text"><small class="text-danger">€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
-                        }
-                </div>
-            </div>
-        }
-    }  else if (noCoinFound) {
-        <p>No coin found with that ID.</p>
- }
+    <table class="table">
+        <thead>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Math.Min(5, searchResults.Count); i++)
+            {
+                var coin = searchResults[i];
+                <tr>
+                    <td><img src="@coin.Thumb" style="height: 20px; width: 20px;"></td>
+                    <td class="text-white">@coin.Name</td>
+                    <td>
+                        <a href="/@coin.Id"><button class="btn btn-warning">View More Details</button></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (!string.IsNullOrEmpty(searchQuery))
+{
+<p>No results found.</p>
+}
 
 @if (coinDataList != null && coinDataList.Count > 0)
 {
@@ -92,8 +88,7 @@
     private int currentPage = 1;
     private int pageSize = 10;
     private string? searchQuery;
-    private bool noCoinFound = false;
-
+    private List<CoinData>? searchResults;
     protected override async Task OnInitializedAsync()
     {
         await FetchCoinData();
@@ -122,27 +117,32 @@
         }
     }
 
-    private async Task SearchCoinById()
+    private async Task SearchCoins()
     {
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
-            noCoinFound = false;
-            var url = $"https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&ids={searchQuery.ToLower()}";
+            var url = $"https://api.coingecko.com/api/v3/search?query={searchQuery}";
             var response = await Http.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                coinData = System.Text.Json.JsonSerializer.Deserialize<List<CoinData>>(json);
-
-                if (coinData == null || coinData.Count == 0)
-                {
-                    noCoinFound = true;
-                }
+                var result = System.Text.Json.JsonSerializer.Deserialize<SearchResult>(json);
+                searchResults = result.Coins;
             }
         }
     }
+
+    public class SearchResult
+    {
+        [JsonPropertyName("coins")]
+        public List<CoinData>? Coins { get; set; }
+    }
+
     public class CoinData
     {
+        [JsonPropertyName("id")]
+        public string? Id { get; set; }
+
         [JsonPropertyName("name")]
         public string? Name { get; set; }
 
@@ -174,9 +174,12 @@
         public DateTime AtlDate { get; set; }
 
         [JsonPropertyName("market_cap_rank")]
-        public int MarketCapRank { get; set; }
+        public int? MarketCapRank { get; set; }
 
         [JsonPropertyName("total_volume")]
         public long TotalVolume { get; set; }
+
+        [JsonPropertyName("thumb")]
+        public string? Thumb { get; set; }
     }
 }

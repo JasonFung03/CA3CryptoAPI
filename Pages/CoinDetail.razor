@@ -1,0 +1,88 @@
+﻿@page "/{CoinId}"
+@inject HttpClient Http
+@using System.Text.Json.Serialization;
+<PageTitle>@CoinId</PageTitle>
+
+@if (coinData != null && coinData.Count > 0)
+{
+    @foreach (var coin in coinData)
+    {
+        <div class="card mb-5">
+            <div class="card-body bg-dark">
+                <h3>
+                    <img src="@coin.Image" style="height: 50px; width: 50px; vertical-align: middle; margin-right: 5px;">
+                    @coin.Name
+                </h3>
+                <h6 class="card-text">
+                    €@coin.CurrentPrice.ToString("N2")
+                </h6>
+                @if (@coin.PriceChange24H > 0)
+                {
+                    <p class="card-text"><small class="text-success">+€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
+                }
+                else
+                {
+                    <p class="card-text"><small class="text-danger">€@coin.PriceChange24H.ToString("N2") (@coin.PriceChangePercentage24H%) in the last 24 hours.</small></p>
+                }
+            </div>
+        </div>
+    }
+}
+else if (noCoinFound)
+{
+    <p>No coin found with that ID.</p>
+}
+
+@code {
+    [Parameter]
+    public string? CoinId { get; set; }
+    private List<CoinData>? coinData;
+    private bool noCoinFound = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SearchCoinById();
+    }
+
+    private async Task SearchCoinById()
+    {
+        if (!string.IsNullOrWhiteSpace(CoinId))
+        {
+            noCoinFound = false;
+            var url = $"https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&ids={CoinId.ToLower()}";
+            var response = await Http.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                coinData = System.Text.Json.JsonSerializer.Deserialize<List<CoinData>>(json);
+
+                if (coinData == null || coinData.Count == 0)
+                {
+                    noCoinFound = true;
+                }
+            }
+        }
+    }
+
+    public class CoinData
+    {
+        [JsonPropertyName("id")]
+        public string? Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("image")]
+        public string? Image { get; set; }
+
+        [JsonPropertyName("current_price")]
+        public decimal CurrentPrice { get; set; }
+
+        [JsonPropertyName("price_change_24h")]
+        public decimal PriceChange24H { get; set; }
+
+        [JsonPropertyName("price_change_percentage_24h")]
+        public decimal PriceChangePercentage24H { get; set; }
+
+    }
+}

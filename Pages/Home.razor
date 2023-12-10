@@ -46,6 +46,7 @@
                 <th class="text-white">All Time High</th>
                 <th class="text-white">All Time Low</th>
                 <th class="text-white">Volume (24h)</th>
+                <th class="text-white">View Details</th>
             </tr>
         </thead>
         <tbody>
@@ -69,6 +70,7 @@
                     <td class="text-white">€@coinData.Ath.ToString("N2") (@coinData.AthDate)</td>
                     <td class="text-white">€@coinData.Atl.ToString("N2") (@coinData.AtlDate)</td>
                     <td class="text-white">€@coinData.TotalVolume.ToString("N2")</td>
+                    <td><a href="@coinData.Id"><button class="btn btn-warning">View More Details</button></a></td>
                 </tr>
                 }
         </tbody>

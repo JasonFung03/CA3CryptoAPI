@@ -2,11 +2,11 @@
 @inject HttpClient Http
 @using System.Text.Json.Serialization;
 <PageTitle>@CoinId</PageTitle>
-
 @if (coinData != null && coinData.Count > 0)
 {
     @foreach (var coin in coinData)
     {
+                  <link rel="icon" type="image/png" href="@coin.Image" />
                   <div class="container">
                     <h3>
                     <img src="@coin.Image" style="height: 50px; width: 50px; vertical-align: middle; margin-right: 5px;">
@@ -48,15 +48,15 @@
                     <div class="row">
                     <div class="col-md-3 mt-2">
                         <p>Total Volume</p>
-                        <p class="text-muted">€@coin.TotalVolume</p>
+                        <p class="text-muted" id="tot_vol">€@coin.TotalVolume</p>
                     </div>
                     <div class="col-md-3 mt-2">
                         <p>Circulating Supply</p>
-                        <p class="text-muted">@coin.Circulating_Supply</p>
+                        <p class="text-muted" id="circ_supply">@coin.Circulating_Supply</p>
                     </div>
                     <div class="col-md-3 mt-2">
                         <p>Max Supply</p>
-                        <p class="text-muted">@coin.MaxSupply</p>
+                        <p class="text-muted" id="max_supply">@coin.MaxSupply</p>
                     </div>
                     </div>
                     <hr>
@@ -143,10 +143,10 @@ else if (noCoinFound)
         public double CurrentPrice { get; set; }
 
         [JsonPropertyName("price_change_24h")]
-        public decimal PriceChange24H { get; set; }
+        public double? PriceChange24H { get; set; }
 
         [JsonPropertyName("price_change_percentage_24h")]
-        public decimal PriceChangePercentage24H { get; set; }
+        public decimal? PriceChangePercentage24H { get; set; }
 
         [JsonPropertyName("market_cap")]
         public decimal MarketCap { get; set; }

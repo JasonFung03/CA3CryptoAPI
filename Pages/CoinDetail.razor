@@ -13,9 +13,9 @@
                     @coin.Name
                     </h3>
                     @if (coin.CurrentPrice > 1) {
-                            <strong><h2 class="card-text">€@coin.CurrentPrice.ToString("N2")</h2></strong>   
+                            <strong><h2 class="card-text" id="price">€@coin.CurrentPrice.ToString("N2")</h2></strong>   
                         } else {
-                            <strong><h2 class="card-text">€@coin.CurrentPrice.ToString("N8")</h2></strong>
+                            <strong><h2 class="card-text" id="price">€@coin.CurrentPrice.ToString("N8")</h2></strong>
                         }
                     @if (@coin.PriceChange24H > 0)
                     {

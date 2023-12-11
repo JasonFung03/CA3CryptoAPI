@@ -15,7 +15,7 @@ public class Tests : PageTest
         var max_supply = Page.Locator("#max_supply");
         await Expect(max_supply).ToHaveTextAsync("21000000.0");
     }
-    
+
     [Test]
     public async Task TestSearchFunction() {
         await Page.GotoAsync("https://jasonfung03.github.io/CA3CryptoAPI/");
@@ -25,5 +25,19 @@ public class Tests : PageTest
         await Expect(Page).ToHaveTitleAsync(new Regex("ethereum"));
         var max_supply = Page.Locator("#max_supply");
         await Expect(max_supply).ToHaveTextAsync("");
+    }
+    
+    [Test]
+    public async Task PriceCalculationShouldBeCorrect()
+    {
+        await Page.GotoAsync("https://jasonfung03.github.io/CA3CryptoAPI/bitcoin");
+        var priceText = await Page.InnerTextAsync("#price");
+        var priceValue = decimal.Parse(priceText.Replace("€", ""));
+        var calculatedAmountText = await Page.InnerTextAsync(".mt-3");
+        var calculatedAmount = decimal.Parse(calculatedAmountText.Split('|')[0].Trim()).ToString("N8");
+        Console.WriteLine(calculatedAmount);
+        var expectedCalculatedAmount = 100 / priceValue;
+        var expectString = expectedCalculatedAmount.ToString("N8");
+        Assert.AreEqual(expectString, calculatedAmount);
     }
 }

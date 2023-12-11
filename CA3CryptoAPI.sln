@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CA3CryptoAPI", "CA3CryptoAPI.csproj", "{3DD98234-348B-47D1-BBA0-DAED5FF4A41A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E2ETests", "..\E2ETests\E2ETests.csproj", "{DB42C54C-EACB-4719-ABDE-B9A29B22C8C8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{3DD98234-348B-47D1-BBA0-DAED5FF4A41A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DD98234-348B-47D1-BBA0-DAED5FF4A41A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DD98234-348B-47D1-BBA0-DAED5FF4A41A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB42C54C-EACB-4719-ABDE-B9A29B22C8C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB42C54C-EACB-4719-ABDE-B9A29B22C8C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB42C54C-EACB-4719-ABDE-B9A29B22C8C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB42C54C-EACB-4719-ABDE-B9A29B22C8C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

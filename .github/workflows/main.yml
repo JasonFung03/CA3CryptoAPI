@@ -15,6 +15,9 @@ jobs:
           
       - name: Install coverage
         run: dotnet tool install --global dotnet-coverage
+
+      - name: Install Sonar
+        run: dotnet tool install --global dotnet-sonarscanner
         
       - name: Run coverage
         run: dotnet test ./CA3CryptoAPI.sln --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./CoverageResults/

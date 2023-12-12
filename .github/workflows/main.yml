@@ -12,6 +12,11 @@ jobs:
         uses: actions/setup-dotnet@v4.0.0
         with:
           dotnet-version: 8.0.100
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Publish .NET Core Project
         run: dotnet publish -c Release -o release --nologo
       - name: Change base tag in index.html to / to CA3CryptoAPI

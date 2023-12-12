@@ -12,24 +12,28 @@ jobs:
         uses: actions/setup-dotnet@v4.0.0
         with:
           dotnet-version: 8.0.100
+          
       - name: Install coverage
         run: dotnet tool install --global dotnet-coverage
+        
+      - name: Run coverage
+        run: dotnet test CA3CrpytoAPI.sln --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./CoverageResults/
+        
       - name: Coverage collect 
-        run: dotnet sonarscanner begin /k:"JasonFung03_CA3CryptoAPI"
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-            dotnet build --no-incremental
-            dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
-            dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet-sonarscanner begin /k:"JasonFung03_CA3CryptoAPI" /o:"jasonfung03" /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/CoverageResults/coverage.opencover.xml"
             
       - name: Publish .NET Core Project
         run: dotnet publish -c Release -o release --nologo
+        
       - name: Change base tag in index.html to / to CA3CryptoAPI
         run: sed -i 's/<base href="\/" \/>/<base href="\/CA3CryptoAPI\/" \/>/g' release/wwwroot/index.html
+        
       - name: copy index to 404 html
         run: cp release/wwwroot/index.html release/wwwroot/404.html
+        
       - name: Add nojekyll file
         run: touch release/wwwroot/.nojekyll
+        
       - name: Commit wwwroot to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
